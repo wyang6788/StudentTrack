@@ -1,7 +1,5 @@
 package main
 
-//import "gopkg.in/mgo.v2/bson"
-
 type Student struct {
 	NetID	 string	`json:"id" bson:"_id"`  
 	Name	string	`json:"name" bson:"name"`
