@@ -15,19 +15,19 @@ func NewRouter() *mux.Router {
 
 				if route.Name == "Get" {
 					router.
-            Methods(route.Method).
-            Path(route.Pattern).
-            Name(route.Name).
+						Methods(route.Method).
+						Path(route.Pattern).
+						Name(route.Name).
 						Queries("name","{name}").
-            Handler(handler)
+						Handler(handler)
 				} else{
 					router.
-            Methods(route.Method).
-            Path(route.Pattern).
-            Name(route.Name).
-            Handler(handler)
+						Methods(route.Method).
+						Path(route.Pattern).
+						Name(route.Name).
+						Handler(handler)
 				}
-    }
-    return router
+		}
+		return router
 }
 
