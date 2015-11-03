@@ -21,7 +21,7 @@ var routes = Routes{
 	Route{
 		"Get",
 		"GET",
-		"/Student/{name}",
+		"/Student/getstudent",
 		Get,
 	},
 	Route{

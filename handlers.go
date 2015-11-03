@@ -29,6 +29,7 @@ func Get(w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
 	name := vars["name"]
+	fmt.Printf("%s\n",name);
 	student := Student{}
 
 	if err:= session.DB("studentapi").C("students").Find(bson.M{"name": name}).One(&student); err != nil{
