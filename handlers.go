@@ -39,7 +39,7 @@ func Get(w http.ResponseWriter, r *http.Request){
 
 	fmt.Printf("%+v\n", student);	
 	
-  result, _ := json.Marshal(student)
+	result, _ := json.Marshal(student)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
