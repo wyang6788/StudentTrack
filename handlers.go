@@ -57,9 +57,7 @@ func Post(w http.ResponseWriter, r *http.Request){
 
 	fmt.Printf("%+v\n", student);	
 
-	collection := session.DB("studentapi").C("students")
-
-	collection.Insert(student)
+	session.DB("studentapi").C("students").Insert(student)
 
 	result, _:= json.Marshal(student)
 
@@ -96,7 +94,7 @@ func Update(w http.ResponseWriter, r *http.Request){
 		case average - 20 < Students[i].Grade && Students[i].Grade <= average - 10:
 			rating = "C"
 		case Students[i].Grade <= average - 20:
-			return
+			continue
 		}	
 	
 		session.DB("studentapi").C("students").UpdateId(Students[i].NetID, bson.M{"$set": bson.M{"rating": rating}})	
