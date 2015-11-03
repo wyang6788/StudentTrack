@@ -4,7 +4,8 @@ import(
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"	
+	"os"
+	"strconv"	
 
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -19,7 +20,6 @@ func getSession() *mgo.Session{
 		os.Exit(1)
 	}	
 	
-	fmt.Printf("WE HAVE SUCCESSFULLY CONNECTED TO MONGODB\n")
 	s.SetSafe(&mgo.Safe{})
 	return s
 }
@@ -29,17 +29,14 @@ func Get(w http.ResponseWriter, r *http.Request){
 
 	vars := mux.Vars(r)
 	name := vars["name"]
-	fmt.Printf("%s\n",name);
 	student := Student{}
 
 	if err:= session.DB("studentapi").C("students").Find(bson.M{"name": name}).One(&student); err != nil{
 		w.WriteHeader(404)
-		fmt.Printf("CATASTROPHIC FAILURE WE COULD NOT FIND: %s\n", name)
+		fmt.Fprintf(w,"CATASTROPHIC FAILURE WE COULD NOT FIND: %s\n", name)
 		return
 	} 
 
-	fmt.Printf("%+v\n", student);	
-	
 	result, _ := json.Marshal(student)
 
 	w.Header().Set("Content-Type", "application/json")
@@ -55,8 +52,6 @@ func Post(w http.ResponseWriter, r *http.Request){
 	json.NewDecoder(r.Body).Decode(&student)
 
 	student.Rating = "D"
-
-	fmt.Printf("%+v\n", student);	
 
 	session.DB("studentapi").C("students").Insert(student)
 
@@ -76,7 +71,7 @@ func Update(w http.ResponseWriter, r *http.Request){
 
 	if err:= session.DB("studentapi").C("students").Find(nil).All(&Students); err !=nil{
 		w.WriteHeader(404)
-		fmt.Printf("Update failed\n")
+		fmt.Fprintf(w,"Update failed\n")
 		return
 	}
 
@@ -107,7 +102,34 @@ func Update(w http.ResponseWriter, r *http.Request){
 }
 
 func Delete(w http.ResponseWriter, r *http.Request){
+	session := getSession()
 
+	vars := mux.Vars(r)
+	year, err := strconv.Atoi(vars["year"])
+
+	if err != nil{
+		w.WriteHeader(404)
+		fmt.Fprintf(w,"Year could not be converted to int\n")
+		return
+	}
+
+	var Students []Student
+
+	if err:= session.DB("studentapi").C("students").Find(nil).All(&Students); err !=nil{
+		w.WriteHeader(404)
+		fmt.Fprintf(w,"Delete failed\n")
+		return
+	}
+
+	for i:= 0; i < len(Students); i++{
+		if Students[i].Year < year {
+			session.DB("studentapi").C("students").RemoveId(Students[i].NetID)
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	fmt.Fprintf(w, "Delete successful\n")
 }
 
 func List(w http.ResponseWriter, r *http.Request){
@@ -117,7 +139,7 @@ func List(w http.ResponseWriter, r *http.Request){
 
 	if err:= session.DB("studentapi").C("students").Find(nil).All(&Students); err !=nil{
 		w.WriteHeader(404)
-		fmt.Printf("List failed\n")
+		fmt.Fprintf(w,"List failed\n")
 		return
 	}
 
