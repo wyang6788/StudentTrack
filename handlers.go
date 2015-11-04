@@ -105,13 +105,7 @@ func Delete(w http.ResponseWriter, r *http.Request){
 	session := getSession()
 
 	vars := mux.Vars(r)
-	year, err := strconv.Atoi(vars["year"])
-
-	if err != nil{
-		w.WriteHeader(404)
-		fmt.Fprintf(w,"Year could not be converted to int\n")
-		return
-	}
+	year, _ := strconv.Atoi(vars["year"])
 
 	var Students []Student
 
