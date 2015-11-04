@@ -39,7 +39,7 @@ var routes = Routes{
 	Route{
 		"Delete",
 		"DELETE",
-		"/Student/{year:[0-3000]+}",
+		"/Student/{year:[0-9]+}",
 		Delete,
 	},
 }
